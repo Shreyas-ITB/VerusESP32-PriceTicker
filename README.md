@@ -23,4 +23,8 @@ With its low cost, low power consumption, and versatile capabilities, the ESP32 
 
 - You can switch the boot screen from the animation to a single logo in the code. If you dont like the animation to be played, you can just change the `useLogoAsBoot` which is in Line no 23 from `false` to `true`.
 
+## Wiring Diagram
+
+![circuitdiagram](./Assets/CircuitDiagram.jpg)
+
 ## Images
