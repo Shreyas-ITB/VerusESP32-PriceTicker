@@ -25,6 +25,6 @@ With its low cost, low power consumption, and versatile capabilities, the ESP32 
 
 ## Wiring Diagram
 
-![circuitdiagram](./Assets/CircuitDiagram.jpg)
+![circuitdiagram](./Assets/circuit_diagram.jpg)
 
 ## Images
