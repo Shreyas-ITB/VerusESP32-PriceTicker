@@ -31,4 +31,4 @@ With its low cost, low power consumption, and versatile capabilities, the ESP32 
 
 ![finalimg](./Assets/finaloutput.jpg)
 
-![bootanimate](./Assets/BootAnimation.mp4)
+![bootanimate](./Assets/bootanimation.mp4)
