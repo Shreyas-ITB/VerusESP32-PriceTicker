@@ -26,9 +26,14 @@ With its low cost, low power consumption, and versatile capabilities, the ESP32 
 ## Wiring Diagram
 
 ![circuitdiagram](./Assets/circuit_diagram.jpg)
+You can add the lights to know when the price is dropped or increased.
 
 ## Images
 
 ![finalimg](./Assets/finaloutput.jpg)
 
-[![bootanimate](./Assets/finaloutput.jpg)(./Assets/bootanimation.mp4)]
+https://user-images.githubusercontent.com/97907864/234847692-af4123a3-300b-4a42-81b3-ec8ca1c714eb.mp4
+
+## Intention
+
+As a crypto miner, I know how important it is to track the price of crypto. Thats why i made this project. Hope you like it!
