@@ -4762,7 +4762,7 @@ void loop()
 
   String Balance = http2.getString();
   float balfloat = Balance.toFloat();
-  String FinalBalance = String(balfloat, 6);
+  String FinalBalance = String(balfloat, 4);
   http.end();
 
   Serial.print("Balance: ");                                                  //Display yesterday's price on serial monitor
