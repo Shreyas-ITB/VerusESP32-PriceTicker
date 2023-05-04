@@ -17,16 +17,17 @@ Adafruit_SSD1306 display (SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);    //
 int frame_delay =70;
 int playing = 0;
 
-const char* ssid = "ShreyasITB";                                               //Set your WiFi network name and password
-const char* password = "air47169";
+const char* ssid = "YOUR WIFI NAME";                                               //Set your WiFi network name and password
+const char* password = "YOUR WIFI PASSWORD";
 const bool useLogoAsBoot = false;                                               //Set it false if you want the gif to be displayed in the boot screen
-//const String poolurl = "https://luckpool.net/verus/miner/";                      //Set this to https://pool.verus.io/api/worker_stats? if your using verus community pool.
-//const String mineraddress = "RMfrbs9eApM4VXV6htayiw1ks5WUGDvGtB";                 //Change the value YOUR MINING ADDRESS to your actual verus coin address.
+const String poolurl = "https://explorer.verus.io/ext/getbalance/";                    
+const String mineraddress = "YOUR WALLET ADDRESS";                 //Change the value YOUR MINING ADDRESS to your actual verus coin address.
 const int httpsPort = 443;                                                    //Veruscoin price API powered by CoinGecko
 const String url = "https://api.coingecko.com/api/v3/simple/price?ids=verus-coin&vs_currencies=USD&include_24hr_change=true";
 
 WiFiClient client;                                                            //Create a new WiFi client
 HTTPClient http;
+HTTPClient http2;
 
 String formattedDate;                                                         //Create variables to store the date and time
 String dayStamp;
@@ -4720,7 +4721,6 @@ void loop()
   bool isUp = USD24hrFloat > 0;                                                         //Check whether price has increased or decreased
   double percentChange;
   String dayChangeString = "24hr. Change: ";
-  String displaybal = "Bal: "; 
   if (isUp)                                                                             //If price has increased from yesterday
   {
     digitalWrite(upLED, HIGH);
@@ -4750,52 +4750,44 @@ void loop()
   display.display();                                                                    //Execute the new display
 
   http.end();                                                                           //End the WiFi connection
-// delay(8000);
-//
-// Serial.print("Connecting to ");                                                       //Display url on Serial monitor for debugging
-// Serial.println(poolurl + mineraddress);
-//
-//  http.begin(poolurl + mineraddress);
-//  int poolhttpCode = http.GET();                                                            //Get crypto price from API
-//  StaticJsonDocument<2000> pooldoc;
-//  DeserializationError poolerror = deserializeJson(pooldoc, http.getString());
-//
-//  if (poolerror)                                                                            //Display error message if unsuccessful
-//  {
-//    Serial.print(F("deserializeJson Failed"));
-//    Serial.println(poolerror.f_str());
-//    delay(2500);
-//    return;
-//  }
-//
-//  Serial.print("HTTP Status Code: ");
-//  Serial.println(poolhttpCode);
-//
-//  String Hashrate = pooldoc["hashrateString"].as<String>();                              //Store pool details and update date in local variables
-//  float Balance = pooldoc["balance"].as<float>();
-//  String FinalBalance = String(Balance, 8);
-//  http.end();
-//
-//  Serial.print("Hashrate: ");                                                       //Display current price on serial monitor
-//  Serial.println(Hashrate.toDouble());
-//
-//  Serial.print("Balance: ");                                                  //Display yesterday's price on serial monitor
-//  Serial.println(Balance);  
-//
-//  display.clearDisplay();                                                               //Clear the OLED display
-//  display.setTextSize(1);
-//  printCenter("Miner Statistics", 0, 0);                                                         //Display the comparison header
-//
-//  display.setTextSize(2);
-//  printCenter("⛏" + Hashrate, 0, 25);                                                //Display the current price
-//                                           
-//  display.setTextSize(1);                                                               //Display the change percentage
-//  displaybal = displaybal + FinalBalance;
-//  printCenter(displaybal, 0, 55);
-//  display.display();                                                                    //Execute the new display
-//
-//  http.end();
-  delay(20000);
+  delay(8000);
+  String displaybal = "Bal: "; 
+  Serial.print("Connecting to ");                                                       //Display url on Serial monitor for debugging
+  Serial.println(poolurl + mineraddress);
+
+  http2.begin(poolurl + mineraddress);
+  int poolhttpCode = http2.GET();                                                            //Get crypto price from API
+  Serial.print("HTTP Status Code: ");
+  Serial.println(poolhttpCode);
+
+  String Balance = http2.getString();
+  float balfloat = Balance.toFloat();
+  String FinalBalance = String(balfloat, 6);
+  http.end();
+
+  Serial.print("Balance: ");                                                  //Display yesterday's price on serial monitor
+  Serial.println(Balance);  
+
+  display.clearDisplay();                                                               //Clear the OLED display
+  display.setTextSize(1);
+  printCenter("Wallet Statistics", 0, 0);                                                         //Display the comparison header
+
+  display.setTextSize(2);
+  float newprice = VRSCUSDPrice.toFloat();
+  float newBal = Balance.toFloat();
+  Serial.println(newBal);
+  Serial.println(newprice);  
+  float pricebal = newprice*newBal;
+  String finalpricebal = String(pricebal);
+  printCenter("$" + finalpricebal, 0, 25);                                                //Display the current price
+                                            
+  display.setTextSize(1);                                                               //Display the change percentage
+  displaybal = displaybal + FinalBalance + " VRSC(s)";
+  printCenter(displaybal, 0, 55);
+  display.display();                                                                    //Execute the new display
+
+  http.end();
+  delay(8000);
 }
 void printCenter(const String buf, int x, int y)                          //Function to centre the current price in the display width
 {
