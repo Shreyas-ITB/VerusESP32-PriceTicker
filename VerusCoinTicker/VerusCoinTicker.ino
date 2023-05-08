@@ -17,18 +17,19 @@ Adafruit_SSD1306 display (SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);    //
 int frame_delay =70;
 int playing = 0;
 
-const char* ssid = "YOUR WIFI NAME";                                               //Set your WiFi network name and password
-const char* password = "YOUR WIFI PASSWORD";
+const char* ssid = "ShreyasITB";                                               //Set your WiFi network name and password
+const char* password = "air47169";
 const bool useLogoAsBoot = false;                                               //Set it false if you want the gif to be displayed in the boot screen
-const String poolurl = "https://explorer.verus.io/ext/getbalance/";                    
-const String mineraddress = "YOUR WALLET ADDRESS";                 //Change the value YOUR MINING ADDRESS to your actual verus coin address.
+const String poolurl = "https://explorer.verus.io/ext/getbalance/";
+const String mineraddress = "RMfrbs9eApM4VXV6htayiw1ks5WUGDvGtB";                 //Change the value YOUR MINING ADDRESS to your actual verus coin address.
 const int httpsPort = 443;                                                    //Veruscoin price API powered by CoinGecko
 const String url = "https://api.coingecko.com/api/v3/simple/price?ids=verus-coin&vs_currencies=USD&include_24hr_change=true";
+const char* apiEndpoint = "https://api.coingecko.com/api/v3/coins/verus-coin/market_chart?vs_currency=inr&days=7";
 
 WiFiClient client;                                                            //Create a new WiFi client
 HTTPClient http;
 HTTPClient http2;
-
+HTTPClient http3;
 String formattedDate;                                                         //Create variables to store the date and time
 String dayStamp;
 String timeStamp;
@@ -4739,7 +4740,7 @@ void loop()
 
   display.clearDisplay();                                                               //Clear the OLED display
   display.setTextSize(1);
-  printCenter("VRSC/USD", 0, 0);                                                         //Display the comparison header
+  printCenter("VRSC/USD Price", 0, 0);                                                         //Display the comparison header
 
   display.setTextSize(2);
   printCenter("$" + VRSCUSDPrice, 0, 25);                                                //Display the current price
@@ -4750,7 +4751,73 @@ void loop()
   display.display();                                                                    //Execute the new display
 
   http.end();                                                                           //End the WiFi connection
-  delay(8000);
+  delay(20000);
+  http3.begin(apiEndpoint);
+  int httpResponseCode = http3.GET();
+
+  if (httpResponseCode == 200) {
+    String response = http3.getString();
+    DynamicJsonDocument doc(2048);
+    deserializeJson(doc, response);
+
+    JsonArray prices = doc["prices"];
+    int numPoints = prices.size();
+
+    // Find the minimum and maximum prices
+    float minPrice = prices[0][1].as<float>();
+    float maxPrice = prices[0][1].as<float>();
+
+    for (int i = 1; i < numPoints; i++) {
+      float price = prices[i][1].as<float>();
+
+      if (price < minPrice) {
+        minPrice = price;
+      }
+
+      if (price > maxPrice) {
+        maxPrice = price;
+      }
+    }
+
+    // Handle the case when all prices are the same
+    if (minPrice == maxPrice) {
+      minPrice -= 0.1;
+      maxPrice += 0.1;
+    }
+
+    // Clear the display
+    display.clearDisplay();
+    // Draw the heading
+    display.setCursor(0, 0);
+    display.setTextSize(1);
+    printCenter("VRSC/INR Chart", 0, 0); // usd doesnt work because there its a float thats less than 0 hence it throws an error.
+    
+    // Draw the graph
+    int graphWidth = SCREEN_WIDTH - 30; // Leave some margin on both sides
+    int graphHeight = SCREEN_HEIGHT - 30; // Leave some margin on both sides
+
+    for (int i = 1; i < numPoints; i++) {
+      float pricePrev = prices[i - 1][1].as<float>();
+      float priceCurr = prices[i][1].as<float>();
+
+      // Map the prices to the graph coordinates
+      int xPrev = map(i - 1, 0, numPoints - 1, 0, graphWidth);
+      int xCurr = map(i, 0, numPoints - 1, 0, graphWidth);
+      int yPrev = map(pricePrev, minPrice, maxPrice, graphHeight, 0);
+      int yCurr = map(priceCurr, minPrice, maxPrice, graphHeight, 0);
+
+      // Draw a line between the previous and current points
+      display.drawLine(xPrev + 10, yPrev + 10, xCurr + 10, yCurr + 10, WHITE);
+    }
+    display.setTextSize(1);                                                 
+    printCenter("Chart: 7d/1w diff", 0, 55);
+    display.display();
+  }
+  else {
+    Serial.print("Error: ");
+    Serial.println(httpResponseCode);
+  }
+  delay(20000);
   String displaybal = "Bal: "; 
   Serial.print("Connecting to ");                                                       //Display url on Serial monitor for debugging
   Serial.println(poolurl + mineraddress);
@@ -4787,7 +4854,7 @@ void loop()
   display.display();                                                                    //Execute the new display
 
   http.end();
-  delay(8000);
+  delay(60000);
 }
 void printCenter(const String buf, int x, int y)                          //Function to centre the current price in the display width
 {
