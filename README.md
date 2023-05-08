@@ -26,7 +26,7 @@ With its low cost, low power consumption, and versatile capabilities, the ESP32 
 ## Wiring Diagram
 
 ![circuitdiagram](./Assets/circuit_diagram.jpg)
-You can add the lights to know when the price is dropped or increased.
+\nYou can add the lights to know when the price is dropped or increased.
 
 ## Images
 
