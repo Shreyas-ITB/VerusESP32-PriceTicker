@@ -26,7 +26,7 @@ With its low cost, low power consumption, and versatile capabilities, the ESP32 
 ## Wiring Diagram
 
 ![circuitdiagram](./Assets/circuit_diagram.jpg)
-\nYou can add the lights to know when the price is dropped or increased.
+- You can add the lights to know when the price is dropped or increased.
 
 ## Images
 
@@ -34,6 +34,15 @@ With its low cost, low power consumption, and versatile capabilities, the ESP32 
 
 https://user-images.githubusercontent.com/97907864/234847692-af4123a3-300b-4a42-81b3-ec8ca1c714eb.mp4
 
+## Updates
+
+* Added Balance fetching and feature that calculates how much the balance is worth in usd
+* Added Verus Price Graph
+
+## Note
+
+- The Price graph only shows the price chart in INR, USD and BTC Graphs do not work as verus is worth less than a dollar the board is unable to divide 0 price and hence can't plot the graph therefore throws an error restarting the board. You can change the ApiEndpoint url at the top of the code to something which has more than a dollar of price. Also the prices are taken from Coingecko API, the board is the one which calculates everything and plots it and then displays it on the screen. So don't expect the chart to be 1:1 exact as it is in the Coingecko verus page. Although it looks very very similar, there is a slight change in the graph on the board.
+
 ## Intention
 
-As a crypto miner, I know how important it is to track the price of crypto. Thats why i made this project. Hope you like it!
+As a Crypto Miner, Developer and Enthusiast, I know how important it is to track the price of crypto. Thats why i made this project. Hope you like it!
