@@ -33,6 +33,7 @@ HTTPClient http3;
 String formattedDate;                                                         //Create variables to store the date and time
 String dayStamp;
 String timeStamp;
+String formattedBalance;
 
 const unsigned char epd_bitmap_frame_00_delay_0 [] PROGMEM = {
   0xff, 0xff, 0xff, 0x80, 0x00, 0x00, 0x1f, 0xff, 0xff, 0xc0, 0x00, 0x00, 0x01, 0xff, 0xff, 0xff, 
@@ -4751,7 +4752,7 @@ void loop()
   display.display();                                                                    //Execute the new display
 
   http.end();                                                                           //End the WiFi connection
-  delay(20000);
+  delay(8000);
   http3.begin(apiEndpoint);
   int httpResponseCode = http3.GET();
 
@@ -4817,7 +4818,7 @@ void loop()
     Serial.print("Error: ");
     Serial.println(httpResponseCode);
   }
-  delay(20000);
+  delay(8000);
   String displaybal = "Bal: "; 
   Serial.print("Connecting to ");                                                       //Display url on Serial monitor for debugging
   Serial.println(poolurl + mineraddress);
@@ -4847,14 +4848,27 @@ void loop()
   float pricebal = newprice*newBal;
   String finalpricebal = String(pricebal);
   printCenter("$" + finalpricebal, 0, 25);                                                //Display the current price
-                                            
+
+  int balanceValue = FinalBalance.toInt(); // Convert the balance string to an integer for comparison
+
+  if (balanceValue < 1000) {
+  // Balance is less than 1000, return the normal variable value
+  formattedBalance = FinalBalance;
+} else if (balanceValue < 1000000) {
+  // Balance is between 1000 and 999999, convert it to the appropriate format (1.1k, 5.5k, etc.)
+  float formattedValue = balanceValue / 1000.0; // Convert balance to float and divide by 1000
+  formattedBalance = String(formattedValue, 1) + "k"; // Display one decimal place
+} else {
+  // Balance is equal to or greater than 1000000, display as 1 million
+  formattedBalance = "1 million";
+}
   display.setTextSize(1);                                                               //Display the change percentage
-  displaybal = displaybal + FinalBalance + " VRSC(s)";
+  displaybal = displaybal + formattedBalance + " VRSC(s)";
   printCenter(displaybal, 0, 55);
   display.display();                                                                    //Execute the new display
 
   http.end();
-  delay(60000);
+  delay(8000);
 }
 void printCenter(const String buf, int x, int y)                          //Function to centre the current price in the display width
 {
